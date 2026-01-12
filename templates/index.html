@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Monitor Input Switcher</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin-top: 0;
+            color: #333;
+        }
+        .input-group {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            padding: 10px;
+            margin: 5px 0;
+            background: #f9f9f9;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        label:hover {
+            background: #e9e9e9;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        input[type="radio"]:checked + span {
+            font-weight: bold;
+        }
+        label:has(input:checked) {
+            background: #e3f2fd;
+            border-color: #2196F3;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: none;
+        }
+        button:hover {
+            background: #1976D2;
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .status.success {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+        .status.error {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Monitor Input</h1>
+        <form method="POST" action="/switch">
+            <div class="input-group">
+                <label>
+                    <input type="radio" name="input" value="dp" {{ 'checked' if current == 'dp' else '' }}>
+                    <span>DisplayPort</span>
+                </label>
+                <label>
+                    <input type="radio" name="input" value="usbc" {{ 'checked' if current == 'usbc' else '' }}>
+                    <span>USB-C</span>
+                </label>
+                <label>
+                    <input type="radio" name="input" value="unknown" {{ 'checked' if current == 'unknown' else '' }} disabled>
+                    <span>Unknown Input</span>
+                </label>
+            </div>
+            <button type="submit">Switch Input</button>
+        </form>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="status {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+    <script>
+        // Auto-submit form when radio button changes
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                this.form.submit();
+            });
+        });
+    </script>
+</body>
+</html>
